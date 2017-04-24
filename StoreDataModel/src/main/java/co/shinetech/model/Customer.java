@@ -3,28 +3,20 @@
  */
 package co.shinetech.model;
 
-import java.time.LocalDate;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 /** 
- * Domain class to tranfer Customer data between layers.
+ * Domain class to transfer Customer data between layers.
  * @author rodrigo
  * @since 16/03/2017
  */
 @Entity
 @Table
-public class Customer implements Domain<LongPK>{
+public class Customer implements Domain<Long>{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
@@ -40,12 +32,17 @@ public class Customer implements Domain<LongPK>{
 	@Column(length=20)
 	private String phone;
 	private String email;
-	private LocalDate birthdate;
+	@Temporal(TemporalType.DATE)
+	private Date birthDate;
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY, mappedBy="customer")
-	private List<Order> orders;
+	private List<Order> orders = new ArrayList<>();
 
 	public Customer() {
 		super();
+	}
+
+	public Customer(Long id) {
+		this.id = id;
 	}
 
 	/**
@@ -58,12 +55,12 @@ public class Customer implements Domain<LongPK>{
 	 * @param taxid
 	 * @param phone
 	 * @param email
-	 * @param birthdate
+	 * @param birthDate
 	 * @param orders
 	 */
-	public Customer(LongPK id, String name, String address, String zipcode, String country, String taxid, String phone, String email, LocalDate birthdate, List<Order> orders) {
+	public Customer(Long id, String name, String address, String zipcode, String country, String taxid, String phone, String email, Date birthDate, List<Order> orders) {
 		super();
-		this.id = id.getValue();
+		this.id = id;
 		this.name = name;
 		this.address = address;
 		this.zipcode = zipcode;
@@ -71,18 +68,18 @@ public class Customer implements Domain<LongPK>{
 		this.taxid = taxid;
 		this.phone = phone;
 		this.email = email;
-		this.birthdate = birthdate;
+		this.birthDate = birthDate;
 		this.orders = orders;
 	}
 
 	@Override
-	public LongPK getId() {
-		return new LongPK(id);
+	public Long getId() {
+		return id;
 	}
 
 	@Override
-	public void setId(LongPK id) {
-		this.id = id.getValue();
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -141,12 +138,12 @@ public class Customer implements Domain<LongPK>{
 		this.email = email;
 	}
 
-	public LocalDate getBirthdate() {
-		return birthdate;
+	public Date getBirthDate() {
+		return birthDate;
 	}
 
-	public void setBirthdate(LocalDate birthdate) {
-		this.birthdate = birthdate;
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public void addOrders(List<Order> orders) {
@@ -182,7 +179,7 @@ public class Customer implements Domain<LongPK>{
 	@Override
 	public String toString() {
 		return "Customer [id=" + id + ", name=" + name + ", address=" + address + ", zipcode=" + zipcode + ", country="
-				+ country + ", taxid=" + taxid + ", phone=" + phone + ", email=" + email + ", birthdate=" + birthdate
+				+ country + ", taxid=" + taxid + ", phone=" + phone + ", email=" + email + ", birthDate=" + birthDate
 				+ ", orders=" + orders + "]";
 	}
 }
